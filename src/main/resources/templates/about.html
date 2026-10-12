@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - AI Smart Recruiter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* NAVBAR */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 14, 39, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: #a0aec0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover, .nav-links a.active { color: #fff; }
+        .nav-btn {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+        .nav-btn:hover { transform: translateY(-2px); }
+
+        /* HERO */
+        .hero {
+            padding: 160px 20px 80px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 30%, rgba(102, 126, 234, 0.15) 0%, transparent 60%);
+        }
+        .hero h1 {
+            font-size: 60px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            color: #a0aec0;
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* PROJECT DESCRIPTION */
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 40px;
+        }
+        .section-title {
+            font-size: 40px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        .section-sub {
+            text-align: center;
+            color: #a0aec0;
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+
+        /* ABOUT PROJECT */
+        .project-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 50px;
+            line-height: 1.8;
+            font-size: 16px;
+            color: #cbd5e0;
+        }
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+        .tech-chip {
+            padding: 8px 18px;
+            background: rgba(102, 126, 234, 0.12);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            color: #a8b5ff;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* TEAM */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        .team-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: transform 0.3s, border-color 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+            transform-origin: left;
+        }
+        .team-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+        .team-card:hover::before { transform: scaleX(1); }
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 44px;
+            font-weight: 800;
+            margin: 0 auto 24px;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+        .team-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .team-role {
+            color: #a8b5ff;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        .team-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        .skill-badge {
+            padding: 5px 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            font-size: 12px;
+            color: #cbd5e0;
+        }
+        .social-links {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .social-btn {
+            padding: 10px 20px;
+            background: rgba(102, 126, 234, 0.12);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            color: #a8b5ff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .social-btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* PLACEHOLDER CARD */
+        .placeholder {
+            border: 2px dashed rgba(255,255,255,0.1);
+            opacity: 0.6;
+        }
+        .placeholder .avatar {
+            background: rgba(255,255,255,0.05);
+            color: #4a5568;
+            box-shadow: none;
+        }
+        .placeholder p {
+            color: #4a5568;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        /* CTA */
+        .cta {
+            text-align: center;
+            padding: 80px 40px;
+            background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.12) 0%, transparent 60%);
+        }
+        .cta h2 {
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+        .cta p { color: #a0aec0; margin-bottom: 30px; }
+        .cta-btn {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 40px 60px;
+            text-align: center;
+            color: #718096;
+            font-size: 14px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 16px 24px; }
+            .nav-links { display: none; }
+            .hero h1 { font-size: 36px; letter-spacing: -1px; }
+            .section-title { font-size: 28px; }
+            .project-box { padding: 30px 24px; }
+            .section { padding: 60px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">⚡ AI Smart Recruiter</div>
+    <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/match">AI Matching</a></li>
+        <li><a href="/about" class="active">About</a></li>
+    </ul>
+    <a href="/upload" class="nav-btn">Get Started</a>
+</nav>
+
+<section class="hero">
+    <h1>About <span class="gradient-text">Us</span></h1>
+    <p>Building the future of hiring with AI-powered intelligence</p>
+</section>
+
+<!-- PROJECT DESCRIPTION -->
+<section class="section">
+    <h2 class="section-title">Our Project</h2>
+    <p class="section-sub">What we built and why</p>
+
+    <div class="project-box">
+        <p>
+            <strong style="color:#fff;">AI Smart Recruiter & Career Guide</strong> is a full-stack web application
+            that revolutionizes how candidates and recruiters connect. Powered by Java Spring Boot and MySQL,
+            our platform uses intelligent skill-matching algorithms to analyze resumes, score job fit, and guide
+            candidates on their career growth journey.
+        </p>
+        <p style="margin-top:20px;">
+            Users can upload PDF resumes, get instant analysis of their skills, discover their best-fit job roles,
+            and receive personalized recommendations with curated YouTube learning links for missing skills.
+            Recruiters can match candidates against any job role and see ranked results instantly.
+        </p>
+
+        <h3 style="margin-top:30px; font-size:18px; color:#fff;">🛠️ Tech Stack</h3>
+        <div class="tech-stack">
+            <span class="tech-chip">Java 21</span>
+            <span class="tech-chip">Spring Boot 4</span>
+            <span class="tech-chip">Spring Data JPA</span>
+            <span class="tech-chip">MySQL</span>
+            <span class="tech-chip">Thymeleaf</span>
+            <span class="tech-chip">Apache PDFBox</span>
+            <span class="tech-chip">HTML5</span>
+            <span class="tech-chip">CSS3</span>
+            <span class="tech-chip">JavaScript</span>
+            <span class="tech-chip">Maven</span>
+        </div>
+    </div>
+</section>
+
+<!-- TEAM -->
+<section class="section">
+    <h2 class="section-title">Meet the Team</h2>
+    <p class="section-sub">The minds behind AI Smart Recruiter</p>
+
+    <div class="team-grid">
+
+        <!-- TEAM MEMBER 1 -->
+        <div class="team-card">
+            <div class="avatar">S</div>
+            <h3>Shamshad Begum</h3>
+            <p class="team-role">Full Stack Developer</p>
+            <div class="team-skills">
+                <span class="skill-badge">Java</span>
+                <span class="skill-badge">Spring Boot</span>
+                <span class="skill-badge">MySQL</span>
+                <span class="skill-badge">HTML</span>
+                <span class="skill-badge">CSS</span>
+            </div>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/shamshad-mulla-827899306" 
+                   target="_blank" class="social-btn">
+                    💼 LinkedIn
+                </a>
+            </div>
+        </div>
+
+        <!-- TEAM MEMBER 2 - PLACEHOLDER -->
+        <div class="team-card placeholder">
+            <div class="avatar">?</div>
+            <h3 style="color:#718096;">Coming Soon</h3>
+            <p class="team-role" style="color:#4a5568;">Co-Developer</p>
+            <p>This spot is reserved for a teammate</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+    <h2>Ready to Try It?</h2>
+    <p>Upload your resume and get instant AI analysis</p>
+    <a href="/upload" class="cta-btn">🚀 Get Started</a>
+</section>
+
+<footer>
+    © 2026 AI Smart Recruiter & Career Guide. Built with ❤️ by Shamshad Begum
+</footer>
+
+</body>
+</html>

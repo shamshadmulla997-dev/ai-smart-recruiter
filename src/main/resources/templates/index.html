@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Recruiter & Career Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* NAVBAR */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 14, 39, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #a0aec0;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: #fff; }
+
+        .nav-btn {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 20px 60px;
+            position: relative;
+            background: radial-gradient(circle at 50% 30%, rgba(102, 126, 234, 0.15) 0%, transparent 60%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(102, 126, 234, 0.15);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50px;
+            color: #a8b5ff;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .hero h1 {
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: #a0aec0;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 16px 36px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            padding: 16px 36px;
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        /* FEATURES */
+        .features {
+            padding: 120px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #a0aec0;
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto 80px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            padding: 40px 30px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            transition: transform 0.4s, border-color 0.4s, background 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(102, 126, 234, 0.3);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: #a0aec0;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* STATS */
+        .stats {
+            padding: 80px 60px;
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 40px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 56px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+        }
+
+        .stat-label {
+            color: #a0aec0;
+            font-size: 14px;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 120px 60px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 60%);
+        }
+
+        .cta h2 {
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .cta p {
+            color: #a0aec0;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 40px 60px;
+            text-align: center;
+            color: #718096;
+            font-size: 14px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 16px 24px; }
+            .nav-links { display: none; }
+            .hero h1 { font-size: 42px; letter-spacing: -1px; }
+            .hero p { font-size: 16px; }
+            .section-title { font-size: 32px; }
+            .cta h2 { font-size: 32px; }
+            .features, .cta { padding: 80px 24px; }
+            .stats { padding: 60px 24px; }
+            .stat-num { font-size: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <div class="logo">⚡ AI Smart Recruiter</div>
+    <ul class="nav-links">
+    <li><a href="/dashboard">Dashboard</a></li>
+    <li><a href="/match">AI Matching</a></li>
+    <li><a href="/about">About</a></li>
+</ul>
+    <a href="/upload" class="nav-btn">Get Started</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="badge">✨ Powered by Advanced AI</div>
+        <h1>
+            Find Your Dream Job<br>
+            with <span class="gradient-text">AI Intelligence</span>
+        </h1>
+        <p>Upload your resume, get matched with perfect opportunities, and receive personalized career guidance — all powered by cutting-edge AI.</p>
+        <div class="hero-buttons">
+            <a href="/upload" class="btn-primary">
+                🚀 Upload Resume
+            </a>
+            <a href="#features" class="btn-secondary">
+                Learn More →
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+    <div class="stat">
+        <span class="stat-num">10K+</span>
+        <div class="stat-label">Resumes Analyzed</div>
+    </div>
+    <div class="stat">
+        <span class="stat-num">95%</span>
+        <div class="stat-label">Match Accuracy</div>
+    </div>
+    <div class="stat">
+        <span class="stat-num">500+</span>
+        <div class="stat-label">Companies</div>
+    </div>
+    <div class="stat">
+        <span class="stat-num">24/7</span>
+        <div class="stat-label">AI Support</div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+    <h2 class="section-title">Everything You Need</h2>
+    <p class="section-subtitle">Smart tools powered by AI to accelerate your career growth</p>
+
+   <div class="feature-grid">
+
+    <a href="/upload" class="feature-card" style="text-decoration:none; color:inherit;">
+        <div class="feature-icon">📄</div>
+        <h3>Smart Resume Parsing</h3>
+        <p>Our AI reads your resume, extracts skills, and understands your experience in seconds.</p>
+    </a>
+
+    <a href="/match" class="feature-card" style="text-decoration:none; color:inherit;">
+        <div class="feature-icon">🎯</div>
+        <h3>AI Job Matching</h3>
+        <p>Get matched with jobs that fit your skills, experience, and career goals with 95% accuracy.</p>
+    </a>
+
+    <a href="/dashboard" class="feature-card" style="text-decoration:none; color:inherit;">
+        <div class="feature-icon">🧭</div>
+        <h3>Career Guidance</h3>
+        <p>Personalized advice on skills to learn, certifications to earn, and career paths to explore.</p>
+    </a>
+
+    <a href="/dashboard" class="feature-card" style="text-decoration:none; color:inherit;">
+        <div class="feature-icon">📊</div>
+        <h3>Skill Gap Analysis</h3>
+        <p>See exactly what skills you're missing for your dream role and get a learning roadmap.</p>
+    </a>
+
+    <a href="/match" class="feature-card" style="text-decoration:none; color:inherit;">
+        <div class="feature-icon">⚡</div>
+        <h3>Instant Results</h3>
+        <p>Get match scores and recommendations within seconds — no waiting, no delays.</p>
+    </a>
+
+    <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Privacy First</h3>
+        <p>Your data is encrypted and never shared. Your career journey stays private.</p>
+    </div>
+
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+    <h2>Ready to Transform Your Career?</h2>
+    <p>Join thousands of professionals who found their dream jobs with AI</p>
+    <a href="/upload" class="btn-primary">
+        🎯 Get Started Free
+    </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    © 2026 AI Smart Recruiter & Career Guide. Built with ❤️ using Java & Spring Boot
+</footer>
+
+</body>
+</html>

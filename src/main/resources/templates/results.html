@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Match Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.15) 0%, transparent 50%), #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+            padding: 60px 20px;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 36px; font-weight: 800; margin-bottom: 10px; }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { color: #a0aec0; font-size: 15px; }
+        .job-box {
+            background: rgba(102, 126, 234, 0.08);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .job-box h3 { font-size: 13px; color: #a8b5ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .job-box p { color: #fff; font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+        .candidate {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s, transform 0.3s;
+            position: relative;
+        }
+        .candidate:hover { border-color: rgba(102, 126, 234, 0.4); transform: translateY(-2px); }
+        .rank-badge {
+            position: absolute;
+            top: -10px;
+            left: 28px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .name-block h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        .name-block p { color: #a0aec0; font-size: 14px; }
+        .score-block { text-align: right; }
+        .score-num {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            line-height: 1;
+        }
+        .score-label { color: #a0aec0; font-size: 12px; margin-top: 4px; }
+        .verdict {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        .verdict-excellent { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+        .verdict-good { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .verdict-partial { background: rgba(234, 179, 8, 0.15); color: #facc15; }
+        .verdict-weak { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+        .skills-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .skills-block h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .skills-block.matched h4 { color: #4ade80; }
+        .skills-block.missing h4 { color: #f87171; }
+        .skill-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 3px 4px 3px 0;
+        }
+        .skill-tag.match { background: rgba(34, 197, 94, 0.12); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.25); }
+        .skill-tag.miss { background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.25); }
+        .skill-link {
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .skill-link:hover {
+            background: rgba(239, 68, 68, 0.25) !important;
+            transform: translateY(-1px);
+        }
+        .empty { text-align: center; padding: 80px 20px; color: #a0aec0; }
+        .empty h3 { color: #fff; margin-bottom: 12px; font-size: 22px; }
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .skills-row { grid-template-columns: 1fr; }
+            .header h1 { font-size: 26px; }
+            .score-num { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 <span class="gradient-text">Match Results</span></h1>
+            <p>Ranked candidates for your job role</p>
+        </div>
+
+        <div class="job-box">
+            <h3>Job Role</h3>
+            <p th:text="${jobRole}">Java Developer</p>
+
+            <h3>Required Skills</h3>
+            <span th:each="skill : ${requiredSkills}"
+                  style="display:inline-block; padding:4px 12px; background:rgba(102,126,234,0.15);
+                         color:#a8b5ff; border-radius:12px; font-size:12px; margin:3px 5px 3px 0;"
+                  th:text="${skill}">java</span>
+        </div>
+
+        <div th:if="${ranked.isEmpty()}" class="empty">
+            <h3>No resumes yet</h3>
+            <p>Ask candidates to upload resumes first.</p>
+            <a href="/upload" class="back-btn">Upload Resume</a>
+        </div>
+
+        <div th:each="entry, iter : ${ranked}">
+            <div class="candidate">
+                <div class="rank-badge" th:text="'#' + ${iter.index + 1}">#1</div>
+
+                <div class="top-row">
+                    <div class="name-block">
+                        <h2 th:text="${entry.resume.candidateName}">Name</h2>
+                        <p th:text="${entry.resume.email}">email</p>
+                    </div>
+                    <div class="score-block">
+                        <span class="score-num" th:text="${entry.score} + '%'">85%</span>
+                        <div class="score-label">Match Score</div>
+                        <span class="verdict"
+                              th:classappend="' verdict-' + ${entry.verdict == 'Excellent Match' ? 'excellent' :
+                                                 entry.verdict == 'Good Match' ? 'good' :
+                                                 entry.verdict == 'Partial Match' ? 'partial' : 'weak'}"
+                              th:text="${entry.verdict}">Verdict</span>
+                    </div>
+                </div>
+
+                <div class="skills-row">
+                    <div class="skills-block matched">
+                        <h4>✓ Matched Skills</h4>
+                        <span th:each="skill : ${entry.matchedSkills}"
+                              class="skill-tag match" th:text="${skill}">java</span>
+                    </div>
+                    <div class="skills-block missing">
+                        <h4>✗ Missing Skills (Click to Learn on YouTube)</h4>
+                        <a th:each="item : ${entry.missingSkillsWithLinks}"
+                           th:href="${item.link}"
+                           target="_blank"
+                           class="skill-tag miss skill-link"
+                           th:text="${item.skill} + ' ▶'">aws</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align:center;">
+            <a href="/match" class="back-btn">← Try Another Role</a>
+        </div>
+    </div>
+</body>
+</html>

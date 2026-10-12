@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Resume - AI Smart Recruiter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: radial-gradient(circle at 50% 30%, rgba(102, 126, 234, 0.15) 0%, transparent 60%), #0a0e27;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 50px 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #a0aec0;
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e0;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #4a5568;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 24px;
+            color: #718096;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover { color: #fff; }
+
+        @media (max-width: 600px) {
+            .container { padding: 30px 24px; }
+            .row { grid-template-columns: 1fr; }
+            .header h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📄 Upload Your <span class="gradient-text">Resume</span></h1>
+        <p>Let AI analyze your profile and find perfect matches</p>
+    </div>
+
+    <form method="post" th:action="@{/submitResume}" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="candidateName" placeholder="e.g. Ravi Kumar" required>
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="ravi@example.com" required>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="phone" placeholder="9876543210">
+            </div>
+            <div class="form-group">
+                <label>Experience (Years)</label>
+                <input type="number" name="experienceYears" placeholder="3" min="0" max="50">
+            </div>
+        </div>
+
+        
+        <div class="form-group">
+    <label>📎 Upload PDF Resume</label>
+    <input type="file" name="resumeFile" accept=".pdf" 
+           style="padding: 12px; cursor: pointer;">
+    <p style="color: #718096; font-size: 12px; margin-top: 6px;">
+        Upload a PDF OR paste text below
+    </p>
+</div>
+
+<div style="text-align:center; color:#4a5568; margin: 20px 0; font-size: 13px;">
+    ─────── OR ───────
+</div><div class="form-group">
+            <label>Resume Text</label>
+            <textarea name="rawText" placeholder="Paste your resume text here..."></textarea>
+        </div>
+
+        <button type="submit">🚀 Analyze with AI</button>
+    </form>
+
+    <a href="/" class="back-link">← Back to Home</a>
+</div>
+
+</body>
+</html>
