@@ -66,4 +66,42 @@ public class MatchController {
 
         return "results";
     }
+    @GetMapping("/leaderboard")
+    public String leaderboardPage(Model model) {
+        model.addAttribute("roles", aiMatchingService.getAllRoles());
+        return "leaderboard";
+    }
+
+    @PostMapping("/leaderboard")
+    public String leaderboardResults(@RequestParam("jobRole") String jobRole,
+                                     Model model) {
+        List<String> requiredSkills = aiMatchingService.getSkillsForRole(jobRole);
+
+        if (requiredSkills.isEmpty()) {
+            model.addAttribute("error", "❌ Role not found. Try again.");
+            model.addAttribute("roles", aiMatchingService.getAllRoles());
+            return "leaderboard";
+        }
+
+        List<Resume> allResumes = resumeService.getAll();
+        List<Map<String, Object>> ranked = new ArrayList<>();
+
+        for (Resume r : allResumes) {
+            double score = aiMatchingService.matchScore(r, requiredSkills);
+            Map<String, Object> row = new HashMap<>();
+            row.put("resume", r);
+            row.put("score", score);
+            row.put("matched", aiMatchingService.matchedSkills(r, requiredSkills).size());
+            row.put("total", requiredSkills.size());
+            ranked.add(row);
+        }
+
+        ranked.sort((a, b) -> Double.compare((Double) b.get("score"), (Double) a.get("score")));
+
+        model.addAttribute("jobRole", jobRole);
+        model.addAttribute("ranked", ranked);
+        model.addAttribute("total", allResumes.size());
+
+        return "leaderboard";
+    }
 }

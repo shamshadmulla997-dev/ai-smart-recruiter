@@ -2,6 +2,7 @@ package ai_smart_recruiter.ai;
 
 import ai_smart_recruiter.model.Resume;
 import org.springframework.stereotype.Service;
+import java.util.LinkedHashMap;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -189,5 +190,57 @@ public class AiMatchingService {
     /** All skills this resume has (from master list) */
     public List<String> getResumeSkills(Resume resume) {
         return new ArrayList<>(extractSkills(resume.getRawText()));
+    }
+    /** Count how many resumes contain each skill */
+    public Map<String, Integer> getSkillFrequency(List<Resume> resumes) {
+        Map<String, Integer> freq = new HashMap<>();
+        Set<String> allSkills = new HashSet<>();
+        for (List<String> list : ROLE_SKILLS.values()) allSkills.addAll(list);
+
+        for (Resume r : resumes) {
+            Set<String> resumeSkills = extractSkills(r.getRawText());
+            for (String skill : resumeSkills) {
+                freq.merge(skill, 1, Integer::sum);
+            }
+        }
+
+        // Sort by frequency desc, keep top 10
+        return freq.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(10)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new));
+    }
+
+    /** Average experience years */
+    public double getAverageExperience(List<Resume> resumes) {
+        return resumes.stream()
+                .filter(r -> r.getExperienceYears() != null)
+                .mapToInt(Resume::getExperienceYears)
+                .average()
+                .orElse(0.0);
+    }
+
+    /** Count how many resumes best-match each role */
+    public Map<String, Integer> getTopMatchedRoles(List<Resume> resumes) {
+        Map<String, Integer> roleCount = new HashMap<>();
+        for (Resume r : resumes) {
+            List<Map<String, Object>> best = getBestRolesForResume(r, 1);
+            if (!best.isEmpty()) {
+                String role = (String) best.get(0).get("role");
+                roleCount.merge(role, 1, Integer::sum);
+            }
+        }
+        return roleCount.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(5)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new));
     }
 }

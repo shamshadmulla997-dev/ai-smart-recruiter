@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - AI Smart Recruiter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 50% 0%, rgba(102, 126, 234, 0.15) 0%, transparent 50%), #0a0e27;
+            color: #fff;
+            min-height: 100vh;
+            padding: 60px 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { font-size: 42px; font-weight: 800; margin-bottom: 12px; letter-spacing: -1px; }
+        .gradient-text {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { color: #a0aec0; font-size: 16px; }
+        .card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+        }
+        input:focus { outline: none; border-color: #fbbf24; background: rgba(251, 191, 36, 0.05); }
+        input::placeholder { color: #4a5568; }
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(251, 191, 36, 0.4);
+        }
+        .role-chip {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            color: #fbbf24;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 4px 6px 4px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .role-chip:hover { background: rgba(251, 191, 36, 0.25); color: #fff; }
+        .roles-hint {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .roles-hint h4 {
+            font-size: 12px;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+        .error-msg {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .role-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: #fbbf24;
+        }
+        .rank-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 24px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .rank-item:hover {
+            transform: translateX(6px);
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+        .rank-item.top-1 { background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), rgba(255,255,255,0.02)); border-color: rgba(251, 191, 36, 0.5); }
+        .rank-item.top-2 { background: linear-gradient(90deg, rgba(192, 192, 192, 0.12), rgba(255,255,255,0.02)); border-color: rgba(192, 192, 192, 0.4); }
+        .rank-item.top-3 { background: linear-gradient(90deg, rgba(205, 127, 50, 0.12), rgba(255,255,255,0.02)); border-color: rgba(205, 127, 50, 0.4); }
+        .rank-num {
+            font-size: 24px;
+            font-weight: 800;
+            min-width: 50px;
+            text-align: center;
+        }
+        .rank-item.top-1 .rank-num { font-size: 32px; }
+        .avatar {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .info { flex: 1; }
+        .info h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+        .info p { font-size: 12px; color: #a0aec0; }
+        .score-badge {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .score-sub { font-size: 10px; color: #a0aec0; text-align: right; }
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0aec0;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #718096;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover { color: #fff; }
+        @media (max-width: 600px) {
+            .rank-item { padding: 14px; gap: 12px; }
+            .rank-num { font-size: 18px; min-width: 30px; }
+            .rank-item.top-1 .rank-num { font-size: 24px; }
+            .avatar { width: 40px; height: 40px; font-size: 16px; }
+            .info h3 { font-size: 15px; }
+            .score-badge { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 <span class="gradient-text">Leaderboard</span></h1>
+            <p>Top candidates ranked by AI match score</p>
+        </div>
+
+        <div class="card">
+            <div th:if="${error}" class="error-msg" th:text="${error}"></div>
+
+            <form method="post" action="/leaderboard">
+                <label>Job Role</label>
+                <input type="text" name="jobRole" id="roleInput"
+                       placeholder="e.g. Java Developer, Data Scientist"
+                       required>
+                <button type="submit">🏆 Show Leaderboard</button>
+            </form>
+
+            <div class="roles-hint">
+                <h4>Available Roles (click to use)</h4>
+                <span th:each="role : ${roles}" class="role-chip" th:text="${role}">Java Developer</span>
+            </div>
+        </div>
+
+        <div th:if="${jobRole != null}">
+            <div class="role-display" th:text="'🏆 ' + ${jobRole} + ' — Top Candidates'">Leaderboard</div>
+
+            <div th:if="${ranked.isEmpty()}" class="empty">
+                <h3>No candidates yet</h3>
+                <p>Upload resumes first to see rankings.</p>
+            </div>
+
+            <div th:each="entry, iter : ${ranked}"
+                 th:classappend="${iter.index == 0 ? 'top-1' : iter.index == 1 ? 'top-2' : iter.index == 2 ? 'top-3' : ''}"
+                 class="rank-item">
+
+                <div class="rank-num">
+                    <span th:if="${iter.index == 0}">🥇</span>
+                    <span th:if="${iter.index == 1}">🥈</span>
+                    <span th:if="${iter.index == 2}">🥉</span>
+                    <span th:if="${iter.index > 2}" th:text="'#' + ${iter.index + 1}">#4</span>
+                </div>
+
+                <div class="avatar" th:text="${entry.resume.candidateName != null ? entry.resume.candidateName.substring(0,1).toUpperCase() : '?'}">S</div>
+
+                <div class="info">
+                    <h3 th:text="${entry.resume.candidateName}">Name</h3>
+                    <p th:text="${entry.matched} + ' of ' + ${entry.total} + ' skills matched'">4 of 10 skills</p>
+                </div>
+
+                <div>
+                    <div class="score-badge" th:text="${entry.score} + '%'">75%</div>
+                    <div class="score-sub">MATCH</div>
+                </div>
+            </div>
+        </div>
+
+        <a href="/" class="back-link">← Back to Home</a>
+    </div>
+
+    <script>
+        document.querySelectorAll('.role-chip').forEach(function(chip) {
+            chip.addEventListener('click', function() {
+                document.getElementById('roleInput').value = this.innerText;
+            });
+        });
+    </script>
+</body>
+</html>

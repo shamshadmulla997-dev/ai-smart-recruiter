@@ -170,15 +170,24 @@
 
         <!-- RECOMMENDED NEXT STEPS -->
         <div class="section">
-            <h2>🚀 Recommended Next Steps</h2>
-            <p style="color:#a0aec0; font-size:14px; line-height:1.7; margin-bottom:16px;">
-                Based on your profile, focus on the skills below to boost your match score for the top roles.
-                Click any skill to find YouTube tutorials.
-            </p>
-            <a th:if="${!topRoles.isEmpty()}" 
-               th:href="@{'/match'}"
-               class="back-btn">🎯 Match a Specific Role</a>
-        </div>
+    <h2>🚀 Recommended Next Steps</h2>
+    <p style="color:#a0aec0; font-size:14px; line-height:1.7; margin-bottom:16px;">
+        Download a detailed PDF report of this candidate's profile, skills, and best-fit roles.
+    </p>
+
+    <a th:href="@{'/career-guide/' + ${resume.id} + '/download'}"
+       class="back-btn"
+       style="background: linear-gradient(135deg, #22c55e, #16a34a);">
+        ⬇ Download PDF Report
+    </a>
+
+    <a th:if="${!topRoles.isEmpty()}" 
+       th:href="@{/match}"
+       class="back-btn"
+       style="margin-left:12px;">
+        🎯 Match a Specific Role
+    </a>
+</div>
 
         <a href="/dashboard" class="back-link">← Back to Dashboard</a>
     </div>

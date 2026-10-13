@@ -8,6 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import ai_smart_recruiter.service.PdfReportService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -39,5 +43,24 @@ public class DashboardController {
         model.addAttribute("topRoles", aiMatchingService.getBestRolesForResume(resume, 5));
 
         return "career-guide";
+    }
+    @Autowired
+    private PdfReportService pdfReportService;
+
+    @GetMapping("/career-guide/{id}/download")
+    public ResponseEntity<byte[]> downloadReport(@PathVariable Long id) {
+        Resume resume = resumeService.findById(id);
+        java.util.List<String> skills = aiMatchingService.getResumeSkills(resume);
+        java.util.List<java.util.Map<String, Object>> roles =
+                aiMatchingService.getBestRolesForResume(resume, 5);
+
+        byte[] pdf = pdfReportService.generateCareerReport(resume, skills, roles);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment",
+                "career-report-" + resume.getCandidateName() + ".pdf");
+
+        return ResponseEntity.ok().headers(headers).body(pdf);
     }
 }
